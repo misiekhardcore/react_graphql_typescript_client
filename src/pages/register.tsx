@@ -1,32 +1,58 @@
-import { FormControl } from "@chakra-ui/form-control";
-import { FormLabel, Input, FormErrorMessage } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
+import { useMutation } from "urql";
+import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
 
 interface registerProps {}
 
-export const register: React.FC<registerProps> = ({}) => {
+const RegisterGQL = `mutation register($username: String!, $password: String!) {
+  register(options: { username: $username, password: $password }) {
+    user {
+      id
+      username
+      createdAt
+      updatedAt
+    }
+    errors {
+      field
+      message
+    }
+  }
+}`;
+
+export const Register: React.FC<registerProps> = ({}) => {
+  const [, register] = useMutation(RegisterGQL);
+
   return (
-    <Wrapper>
+    <Wrapper variant="small">
       <Formik
         initialValues={{ username: "", password: "" }}
-        onSubmit={(values) => {
-          console.log(values);
+        onSubmit={async (values) => {
+          const response = await register(values);
         }}
       >
-        {({ values, handleChange }) => (
+        {({ isSubmitting }) => (
           <Form>
-            <FormControl>
-              <FormLabel htmlFor="username">Username</FormLabel>
-              <Input
-                value={values.username}
-                onChange={handleChange}
-                id="username"
-                placeholder="Username"
-              />
-              {/* <FormErrorMessage>{form.errors.name}</FormErrorMessage> */}
-            </FormControl>
+            <InputField
+              placeholder="Enter your username"
+              label="Username"
+              name="username"
+            />
+            <InputField
+              placeholder="Enter your password"
+              label="Password"
+              name="password"
+            />
+            <Button
+              mt={4}
+              isLoading={isSubmitting}
+              type="submit"
+              colorScheme="teal"
+            >
+              register
+            </Button>
           </Form>
         )}
       </Formik>
@@ -34,4 +60,4 @@ export const register: React.FC<registerProps> = ({}) => {
   );
 };
 
-export default register;
+export default Register;
