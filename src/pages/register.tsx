@@ -1,15 +1,16 @@
 import { Button } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
-import { useMutation } from "urql";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
 import { useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../utils/toErrormap";
+import { useRouter } from "next/router";
 
 interface registerProps {}
 
 export const Register: React.FC<registerProps> = ({}) => {
+  const router = useRouter();
   const [, register] = useRegisterMutation();
 
   return (
@@ -20,6 +21,8 @@ export const Register: React.FC<registerProps> = ({}) => {
           const response = await register(values);
           if (response.data?.register.errors) {
             setErrors(toErrorMap(response.data.register.errors));
+          } else if (response.data?.register.user) {
+            router.push("/");
           }
         }}
       >
@@ -34,6 +37,7 @@ export const Register: React.FC<registerProps> = ({}) => {
               placeholder="Enter your password"
               label="Password"
               name="password"
+              type="password"
             />
             <Button
               mt={4}
