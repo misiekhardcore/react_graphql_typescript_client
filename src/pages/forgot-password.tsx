@@ -1,6 +1,5 @@
 import { Box, Button } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import router from "next/router";
 import React, { useState } from "react";
 import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
