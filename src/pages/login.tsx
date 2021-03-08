@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Link } from "@chakra-ui/react";
+import { Button, Flex, Link } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
 import { InputField } from "../components/InputField";
@@ -37,7 +37,8 @@ export const Login: React.FC<loginProps> = ({}) => {
               label="Username on Email"
               name="usernameOrEmail"
             />
-            <InputField mt={4}
+            <InputField
+              mt={4}
               placeholder="Enter your password"
               label="Password"
               name="password"
