@@ -1,4 +1,4 @@
-import { Button } from "@chakra-ui/react";
+import { Box, Button, Flex, Link } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React from "react";
 import { InputField } from "../components/InputField";
@@ -8,6 +8,7 @@ import { toErrorMap } from "../utils/toErrormap";
 import { useRouter } from "next/router";
 import { withUrqlClient } from "next-urql";
 import { createUrqlClient } from "../utils/createUrqlClient";
+import NextLink from "next/link";
 
 interface loginProps {}
 
@@ -36,12 +37,17 @@ export const Login: React.FC<loginProps> = ({}) => {
               label="Username on Email"
               name="usernameOrEmail"
             />
-            <InputField
+            <InputField mt={4}
               placeholder="Enter your password"
               label="Password"
               name="password"
               type="password"
             />
+            <Flex>
+              <NextLink href="/forgot-password">
+                <Link ml="auto">forgot password?</Link>
+              </NextLink>
+            </Flex>
             <Button
               mt={4}
               isLoading={isSubmitting}

@@ -37,11 +37,13 @@ export const Register: React.FC<registerProps> = ({}) => {
               name="username"
             />
             <InputField
+              mt={4}
               placeholder="Enter your email"
               label="Email"
               name="email"
             />
             <InputField
+              mt={4}
               placeholder="Enter your password"
               label="Password"
               name="password"
