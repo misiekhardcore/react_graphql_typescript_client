@@ -6,7 +6,11 @@ import NextLink from "next/link";
 import { Link } from "@chakra-ui/layout";
 
 const Index = () => {
-  const [{ data }] = usePostsQuery();
+  const [{ data }] = usePostsQuery({
+    variables: {
+      limit: 5,
+    },
+  });
   return (
     <Layout>
       <div>hello world</div>
