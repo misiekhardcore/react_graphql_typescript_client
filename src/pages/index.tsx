@@ -1,11 +1,19 @@
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../utils/createUrqlClient";
-import { usePostsQuery } from "../generated/graphql";
-import { Layout } from "../components/Layout";
-import NextLink from "next/link";
-import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/button";
+import {
+  Box,
+  Flex,
+  Heading,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/layout";
+import { withUrqlClient } from "next-urql";
+import NextLink from "next/link";
 import { useState } from "react";
+import { Layout } from "../components/Layout";
+import { Updoot } from "../components/Updoot";
+import { usePostsQuery } from "../generated/graphql";
+import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
   const [variables, setVariables] = useState({
@@ -33,10 +41,17 @@ const Index = () => {
       ) : (
         <Stack spacing={8} mt={4}>
           {data.posts.posts.map((post) => (
-            <Box key={post.id} p={5} shadow="md" borderWidth="1px">
-              <Heading fontSize="xl">{post.title}</Heading>
-              <Text mt={4}>{post.textSnippet}</Text>
-            </Box>
+            <Flex key={post.id} p={5} shadow="md" borderWidth="1px">
+              <Updoot post={post} />
+              <Box>
+                <Heading fontSize="xl">
+                  {post.title}
+                  {post.id}
+                </Heading>
+                <Text>posted by {post.creator.username}</Text>
+                <Text mt={4}>{post.textSnippet}</Text>
+              </Box>
+            </Flex>
           ))}
         </Stack>
       )}
@@ -46,7 +61,9 @@ const Index = () => {
             onClick={() => {
               setVariables({
                 ...variables,
-                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+                cursor:
+                  data.posts.posts[data.posts.posts.length - 1]
+                    .createdAt,
               });
             }}
             isLoading={fetching}
