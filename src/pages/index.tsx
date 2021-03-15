@@ -1,11 +1,22 @@
-import { Button } from "@chakra-ui/button";
-import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
+import { Button, IconButton } from "@chakra-ui/button";
+import { DeleteIcon } from "@chakra-ui/icons";
+import {
+  Box,
+  Flex,
+  Heading,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/layout";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import { useState } from "react";
 import { Layout } from "../components/Layout";
 import { Updoot } from "../components/Updoot";
-import { usePostsQuery } from "../generated/graphql";
+import {
+  useDeletePostMutation,
+  usePostsQuery,
+} from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
@@ -16,6 +27,7 @@ const Index = () => {
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
+  const [, deletePost] = useDeletePostMutation();
 
   if (!fetching && !data) {
     return <div>you got no posts for some reason</div>;
@@ -27,20 +39,39 @@ const Index = () => {
         <p>loading...</p>
       ) : (
         <Stack spacing={8} mt={4}>
-          {data.posts.posts.map((post) => (
-            <Flex key={post.id} p={5} shadow="md" borderWidth="1px">
-              <Updoot post={post} />
-              <Box>
-                <NextLink href="post/[id]" as={`/post/${post.id}`}>
-                  <Link>
-                    <Heading fontSize="xl">{post.title} </Heading>
-                  </Link>
-                </NextLink>
-                <Text>posted by {post.creator.username}</Text>
-                <Text mt={4}>{post.textSnippet}</Text>
-              </Box>
-            </Flex>
-          ))}
+          {data.posts.posts.map((post) =>
+            !post ? null : (
+              <Flex
+                key={post.id}
+                p={5}
+                shadow="md"
+                borderWidth="1px"
+                alignItems="center"
+              >
+                <Updoot post={post} />
+                <Box flex={1}>
+                  <NextLink href="post/[id]" as={`/post/${post.id}`}>
+                    <Link>
+                      <Heading fontSize="xl">{post.title} </Heading>
+                    </Link>
+                  </NextLink>
+                  <Text fontSize="sm" color="gray.500">
+                    posted by {post.creator.username}
+                  </Text>
+                  <Text mt={4}>{post.textSnippet}</Text>
+                </Box>
+                {post.creatorId === 1}<Box>
+                  <IconButton
+                    aria-label="delete post"
+                    icon={<DeleteIcon />}
+                    onClick={() => {
+                      deletePost({ id: post.id });
+                    }}
+                  />
+                </Box>
+              </Flex>
+            )
+          )}
         </Stack>
       )}
       {data && data.posts.hasMore && (
@@ -49,7 +80,9 @@ const Index = () => {
             onClick={() => {
               setVariables({
                 ...variables,
-                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+                cursor:
+                  data.posts.posts[data.posts.posts.length - 1]
+                    .createdAt,
               });
             }}
             isLoading={fetching}

@@ -9,6 +9,7 @@ import {
 } from "urql";
 import { pipe, tap } from "wonka";
 import {
+  DeletePostMutationVariables,
   LoginMutation,
   LogoutMutation,
   MeDocument,
@@ -46,7 +47,9 @@ const cursorPagination = (): Resolver => {
     // ]
     const allFields = cache.inspectFields(entityKey);
 
-    const fieldInfos = allFields.filter((info) => info.fieldName === fieldName);
+    const fieldInfos = allFields.filter(
+      (info) => info.fieldName === fieldName
+    );
     const size = fieldInfos.length;
     if (size === 0) {
       return undefined;
@@ -104,7 +107,13 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
         },
         updates: {
           Mutation: {
-            vote: (_result, args, cache, info) => {
+            deletePost: (_result, args, cache, _) => {
+              cache.invalidate({
+                __typename: "Post",
+                id: (args as DeletePostMutationVariables).id,
+              });
+            },
+            vote: (_result, args, cache, _) => {
               const { postId, value } = args as VoteMutationVariables;
 
               const data = cache.readFragment(
