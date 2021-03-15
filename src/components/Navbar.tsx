@@ -27,9 +27,11 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
     );
   } else {
     body = (
-      <Flex>
+      <Flex alignItems="center">
         <NextLink href="/create-post">
-          <Link mr={2}>create post</Link>
+          <Button as={Link} color="black" mr={4}>
+            create post
+          </Button>
         </NextLink>
         <Box mr={2}>{data.me.username}</Box>
         <Button
@@ -44,7 +46,6 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
   }
   return (
     <Flex
-      alignItems="center"
       zIndex={1}
       position="sticky"
       top={0}
@@ -52,12 +53,14 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
       bg="tomato"
       p={4}
     >
-      <NextLink href="/">
-        <Link>
-          <Heading>LiReddit</Heading>
-        </Link>
-      </NextLink>
-      <Box ml="auto">{body}</Box>
+      <Flex maxWidth={800} alignItems="center" mx="auto" flex={1}>
+        <NextLink href="/">
+          <Link>
+            <Heading>LiReddit</Heading>
+          </Link>
+        </NextLink>
+        <Box ml="auto">{body}</Box>
+      </Flex>
     </Flex>
   );
 };
