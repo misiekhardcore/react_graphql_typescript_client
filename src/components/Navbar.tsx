@@ -4,9 +4,7 @@ import NextLink from "next/link";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
-interface NavbarProps {}
-
-export const Navbar: React.FC<NavbarProps> = ({}) => {
+export const Navbar: React.FC<{}> = ({}) => {
   const [{ data, fetching }] = useMeQuery();
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
 
@@ -45,14 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
     );
   }
   return (
-    <Flex
-      zIndex={1}
-      position="sticky"
-      top={0}
-      color="white"
-      bg="tomato"
-      p={4}
-    >
+    <Flex zIndex={1} position="sticky" top={0} color="white" bg="tomato" p={4}>
       <Flex maxWidth={800} alignItems="center" mx="auto" flex={1}>
         <NextLink href="/">
           <Link>
