@@ -1,22 +1,12 @@
-import { Button, IconButton } from "@chakra-ui/button";
-import { DeleteIcon } from "@chakra-ui/icons";
-import {
-  Box,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  Text,
-} from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import { useState } from "react";
+import EditDeletePostButtons from "../components/EditDeletePostButtons";
 import { Layout } from "../components/Layout";
 import { Updoot } from "../components/Updoot";
-import {
-  useDeletePostMutation,
-  usePostsQuery,
-} from "../generated/graphql";
+import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
@@ -24,10 +14,10 @@ const Index = () => {
     limit: 10,
     cursor: null as null | string,
   });
+  const [{ data: meData }] = useMeQuery();
   const [{ data, fetching }] = usePostsQuery({
     variables,
   });
-  const [, deletePost] = useDeletePostMutation();
 
   if (!fetching && !data) {
     return <div>you got no posts for some reason</div>;
@@ -60,15 +50,11 @@ const Index = () => {
                   </Text>
                   <Text mt={4}>{post.textSnippet}</Text>
                 </Box>
-                {post.creatorId === 1}<Box>
-                  <IconButton
-                    aria-label="delete post"
-                    icon={<DeleteIcon />}
-                    onClick={() => {
-                      deletePost({ id: post.id });
-                    }}
-                  />
-                </Box>
+                {post.creatorId === 1}
+                <EditDeletePostButtons
+                  creatorId={post.creatorId}
+                  id={post.id}
+                />
               </Flex>
             )
           )}
@@ -80,9 +66,7 @@ const Index = () => {
             onClick={() => {
               setVariables({
                 ...variables,
-                cursor:
-                  data.posts.posts[data.posts.posts.length - 1]
-                    .createdAt,
+                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
               });
             }}
             isLoading={fetching}
