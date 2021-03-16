@@ -4,6 +4,7 @@ query Post($id: Int!) {
     title
     text
     points
+    creatorId
     creator {
       id
       username
