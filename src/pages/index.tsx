@@ -1,5 +1,12 @@
 import { Button } from "@chakra-ui/button";
-import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
+import {
+  Box,
+  Flex,
+  Heading,
+  Link,
+  Stack,
+  Text,
+} from "@chakra-ui/layout";
 import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import { useState } from "react";
@@ -38,7 +45,7 @@ const Index = () => {
                 borderWidth="1px"
                 alignItems="center"
               >
-                <Updoot post={post} />
+                {meData?.me && <Updoot post={post} />}
                 <Box flex={1}>
                   <NextLink href="post/[id]" as={`/post/${post.id}`}>
                     <Link>
@@ -66,7 +73,9 @@ const Index = () => {
             onClick={() => {
               setVariables({
                 ...variables,
-                cursor: data.posts.posts[data.posts.posts.length - 1].createdAt,
+                cursor:
+                  data.posts.posts[data.posts.posts.length - 1]
+                    .createdAt,
               });
             }}
             isLoading={fetching}
