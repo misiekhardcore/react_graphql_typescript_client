@@ -5,13 +5,11 @@ import { InputField } from "../components/InputField";
 import { Wrapper } from "../components/Wrapper";
 import { toErrorMap } from "../utils/toErrormap";
 import { useForgotPasswordMutation } from "../generated/graphql";
-import { withUrqlClient } from "next-urql";
-import { createUrqlClient } from "../utils/createUrqlClient";
 
 interface forgotPasswordProps {}
 
 export const ForgotPassword: React.FC<forgotPasswordProps> = () => {
-  const [, forgotPassword] = useForgotPasswordMutation();
+  const [forgotPassword] = useForgotPasswordMutation();
   const [sent, setSent] = useState(false);
 
   return (
@@ -26,7 +24,7 @@ export const ForgotPassword: React.FC<forgotPasswordProps> = () => {
             );
           } else {
             const response = await forgotPassword({
-              email: values.email,
+              variables: { email: values.email },
             });
             if (response.data?.forgotPassword) {
               setSent(true);
@@ -57,4 +55,4 @@ export const ForgotPassword: React.FC<forgotPasswordProps> = () => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(ForgotPassword);
+export default ForgotPassword;

@@ -7,32 +7,30 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/layout";
-import { withUrqlClient } from "next-urql";
 import NextLink from "next/link";
 import { useState } from "react";
 import EditDeletePostButtons from "../components/EditDeletePostButtons";
 import { Layout } from "../components/Layout";
 import { Updoot } from "../components/Updoot";
 import { useMeQuery, usePostsQuery } from "../generated/graphql";
-import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
   const [variables, setVariables] = useState({
     limit: 10,
     cursor: null as null | string,
   });
-  const [{ data: meData }] = useMeQuery();
-  const [{ data, fetching }] = usePostsQuery({
+  const { data: meData } = useMeQuery();
+  const { data, loading } = usePostsQuery({
     variables,
   });
 
-  if (!fetching && !data) {
+  if (!loading && !data) {
     return <div>you got no posts for some reason</div>;
   }
 
   return (
     <Layout>
-      {!data || fetching ? (
+      {!data || loading ? (
         <p>loading...</p>
       ) : (
         <Stack spacing={8} mt={4}>
@@ -78,7 +76,7 @@ const Index = () => {
                     .createdAt,
               });
             }}
-            isLoading={fetching}
+            isLoading={loading}
             m="auto"
             my={4}
           >
@@ -90,4 +88,4 @@ const Index = () => {
   );
 };
 
-export default withUrqlClient(createUrqlClient, { ssr: true })(Index);
+export default Index;

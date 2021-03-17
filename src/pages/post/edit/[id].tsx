@@ -10,10 +10,10 @@ import { createUrqlClient } from "../../../utils/createUrqlClient";
 import { useGetPostFromUrl } from "../../../utils/useGetPostFromUrl";
 
 const EditPost: React.FC<{}> = ({}) => {
-  const [{ data, error, fetching }] = useGetPostFromUrl();
-  const [, updatePost] = useUpdatePostMutation();
+  const { data, error, loading } = useGetPostFromUrl();
+  const [updatePost] = useUpdatePostMutation();
 
-  if (fetching) {
+  if (loading) {
     <Layout>
       <Box>loading...</Box>
     </Layout>;
@@ -42,7 +42,9 @@ const EditPost: React.FC<{}> = ({}) => {
             text: data?.post?.text || "",
           }}
           onSubmit={async (values) => {
-            await updatePost({ id: data?.post?.id || -1, ...values });
+            await updatePost({
+              variables: { id: data?.post?.id || -1, ...values },
+            });
             router.back();
           }}
         >
@@ -76,4 +78,4 @@ const EditPost: React.FC<{}> = ({}) => {
   );
 };
 
-export default withUrqlClient(createUrqlClient)(EditPost);
+export default EditPost;
