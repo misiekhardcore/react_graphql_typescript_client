@@ -8,24 +8,30 @@ import {
   Text,
 } from "@chakra-ui/layout";
 import NextLink from "next/link";
-import { useState } from "react";
 import EditDeletePostButtons from "../components/EditDeletePostButtons";
 import { Layout } from "../components/Layout";
 import { Updoot } from "../components/Updoot";
-import { useMeQuery, usePostsQuery } from "../generated/graphql";
+import {
+  PostsQuery,
+  useMeQuery,
+  usePostsQuery,
+} from "../generated/graphql";
 
 const Index = () => {
-  const [variables, setVariables] = useState({
-    limit: 10,
-    cursor: null as null | string,
-  });
   const { data: meData } = useMeQuery();
-  const { data, loading } = usePostsQuery({
-    variables,
+  const { data, loading, error, fetchMore, variables } = usePostsQuery({
+    variables: {
+      limit: 10,
+      cursor: null,
+    },
+    notifyOnNetworkStatusChange: true,
   });
 
   if (!loading && !data) {
-    return <div>you got no posts for some reason</div>;
+    return <Box>you got no posts for some reason</Box>;
+  }
+  if (error) {
+    return <Box>{error.message}</Box>;
   }
 
   return (
@@ -69,11 +75,32 @@ const Index = () => {
         <Flex>
           <Button
             onClick={() => {
-              setVariables({
-                ...variables,
-                cursor:
-                  data.posts.posts[data.posts.posts.length - 1]
-                    .createdAt,
+              fetchMore({
+                variables: {
+                  limit: variables!.limit,
+                  cursor:
+                    data.posts.posts[data.posts.posts.length - 1]
+                      .createdAt,
+                },
+                // updateQuery: (
+                //   previousValue,
+                //   { fetchMoreResult }
+                // ): PostsQuery => {
+                //   if (!fetchMoreResult) {
+                //     return previousValue as PostsQuery;
+                //   }
+                //   return {
+                //     __typename: "Query",
+                //     posts: {
+                //       __typename: "PaginatedPosts",
+                //       hasMore: fetchMoreResult.posts.hasMore,
+                //       posts: [
+                //         ...previousValue.posts.posts,
+                //         ...fetchMoreResult.posts.posts,
+                //       ],
+                //     },
+                //   };
+                // },
               });
             }}
             isLoading={loading}
