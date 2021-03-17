@@ -3,13 +3,11 @@ import { withUrqlClient } from "next-urql";
 import React from "react";
 import EditDeletePostButtons from "../../components/EditDeletePostButtons";
 import { Layout } from "../../components/Layout";
-import { useMeQuery } from "../../generated/graphql";
 import { createUrqlClient } from "../../utils/createUrqlClient";
 import { useGetPostFromUrl } from "../../utils/useGetPostFromUrl";
 
 const Post: React.FC<{}> = () => {
   const [{ data, fetching, error }] = useGetPostFromUrl();
-  const [{ data: meData }] = useMeQuery();
   if (fetching)
     return (
       <Layout>
