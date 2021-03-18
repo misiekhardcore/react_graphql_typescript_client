@@ -1,21 +1,11 @@
 import { Button } from "@chakra-ui/button";
-import {
-  Box,
-  Flex,
-  Heading,
-  Link,
-  Stack,
-  Text,
-} from "@chakra-ui/layout";
+import { Box, Flex, Heading, Link, Stack, Text } from "@chakra-ui/layout";
+import { withApollo } from "../utils/withApollo";
 import NextLink from "next/link";
 import EditDeletePostButtons from "../components/EditDeletePostButtons";
 import { Layout } from "../components/Layout";
 import { Updoot } from "../components/Updoot";
-import {
-  PostsQuery,
-  useMeQuery,
-  usePostsQuery,
-} from "../generated/graphql";
+import { useMeQuery, usePostsQuery } from "../generated/graphql";
 
 const Index = () => {
   const { data: meData } = useMeQuery();
@@ -40,7 +30,7 @@ const Index = () => {
         <p>loading...</p>
       ) : (
         <Stack spacing={8} mt={4}>
-          {data.posts.posts.map((post) =>
+          {data?.posts.posts.map((post) =>
             !post ? null : (
               <Flex
                 key={post.id}
@@ -79,8 +69,7 @@ const Index = () => {
                 variables: {
                   limit: variables!.limit,
                   cursor:
-                    data.posts.posts[data.posts.posts.length - 1]
-                      .createdAt,
+                    data.posts.posts[data.posts.posts.length - 1].createdAt,
                 },
                 // updateQuery: (
                 //   previousValue,
@@ -115,4 +104,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default withApollo({ ssr: true })(Index);

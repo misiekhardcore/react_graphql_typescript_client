@@ -3,11 +3,10 @@ import { Box, Flex, Heading, Link } from "@chakra-ui/layout";
 import NextLink from "next/link";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
-import { isServer } from "../utils/isServer";
 import { useApolloClient } from "@apollo/client";
 
 export const Navbar: React.FC<{}> = ({}) => {
-  const { data, loading } = useMeQuery({ skip: isServer() });
+  const { data, loading } = useMeQuery({ fetchPolicy: "network-only" });
   const [logout, { loading: logoutFetching }] = useLogoutMutation();
 
   const apolloClient = useApolloClient();
@@ -49,15 +48,12 @@ export const Navbar: React.FC<{}> = ({}) => {
       </Flex>
     );
   }
+
+  if (data) {
+    console.log(data);
+  }
   return (
-    <Flex
-      zIndex={1}
-      position="sticky"
-      top={0}
-      color="white"
-      bg="tomato"
-      p={4}
-    >
+    <Flex zIndex={1} position="sticky" top={0} color="white" bg="tomato" p={4}>
       <Flex maxWidth={800} alignItems="center" mx="auto" flex={1}>
         <NextLink href="/">
           <Link>
